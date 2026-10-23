@@ -1,0 +1,20 @@
+<?php $this->Form->create(); ?>
+<div class="p-3">
+    <h6 class="form-section-header"><?php $this->_('Dynadot.tab_nameservers.title'); ?></h6>
+    <?php
+    for ($i = 0; $i < 5; $i++) {
+        ?>
+        <div class="mb-3">
+            <?php
+            $this->Form->label($this->_('Dynadot.tab_nameservers.field_ns', true, $i + 1), 'ns' . ($i + 1), ['class' => 'form-label']);
+            $this->Form->fieldText('ns[]', $vars->ns[$i] ?? null, ['id' => 'ns' . ($i + 1), 'class' => 'form-control']);
+            ?>
+        </div>
+        <?php
+    }
+    ?>
+    <div class="d-flex justify-content-end gap-2">
+        <?php $this->Form->fieldSubmit('save', $this->_('Dynadot.tab_nameservers.field_submit', true), ['class' => 'btn btn-primary']); ?>
+    </div>
+</div>
+<?php $this->Form->end(); ?>

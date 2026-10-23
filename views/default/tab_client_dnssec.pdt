@@ -1,0 +1,51 @@
+    <div class="row panel-fix">
+        <div class="col-md-12">
+            <h4><?php $this->_('Dynadot.tab_dnssec.title');?></h4>
+            <p><?php $this->_('Dynadot.tab_dnssec.description');?></p>
+
+            <?php if (!empty($vars->add_view)) { ?>
+            <h5><?php $this->_('Dynadot.tab_dnssec.title_add');?></h5>
+            <?php
+            $this->Form->create();
+            $this->Form->fieldHidden('action', 'add');
+            ?>
+            <div class="form-group">
+                <?php $this->Form->label($this->_('Dynadot.dnssec.key_tag', true), 'key_tag'); ?>
+                <?php $this->Form->fieldText('key_tag', $vars->key_tag ?? '', ['id' => 'key_tag', 'class' => 'form-control']); ?>
+            </div>
+            <div class="form-group">
+                <?php $this->Form->label($this->_('Dynadot.dnssec.algorithm', true), 'algorithm'); ?>
+                <?php $this->Form->fieldSelect('algorithm', $vars->algorithms ?? [], $vars->algorithm ?? 13, ['id' => 'algorithm', 'class' => 'form-control']); ?>
+            </div>
+            <div class="form-group">
+                <?php $this->Form->label($this->_('Dynadot.dnssec.digest_type', true), 'digest_type'); ?>
+                <?php $this->Form->fieldSelect('digest_type', $vars->digest_types ?? [], $vars->digest_type ?? 2, ['id' => 'digest_type', 'class' => 'form-control']); ?>
+            </div>
+            <div class="form-group">
+                <?php $this->Form->label($this->_('Dynadot.dnssec.digest', true), 'digest'); ?>
+                <?php $this->Form->fieldText('digest', $vars->digest ?? '', ['id' => 'digest', 'class' => 'form-control']); ?>
+            </div>
+            <div class="button_row">
+                <?php $this->Form->fieldSubmit('save', $this->_('Dynadot.tab_dnssec.field_add', true), ['class' => 'btn btn-primary pull-right']); ?>
+            </div>
+            <?php $this->Form->end(); ?>
+            <?php } else { ?>
+            <div class="button_row">
+                <a class="btn btn-default pull-right" href="<?php echo $this->Html->safe($this->base_uri . 'services/manage/' . ($service_id ?? '') . '/tabClientDnssec/?action=add');?>"><?php $this->_('Dynadot.tab_dnssec.field_add');?></a>
+            </div>
+            <?php } ?>
+
+            <div class="clearfix"></div>
+            <hr />
+            <h5><?php $this->_('Dynadot.tab_dnssec.title_clear');?></h5>
+            <p><?php $this->_('Dynadot.tab_dnssec.clear_description');?></p>
+            <?php
+            $this->Form->create();
+            $this->Form->fieldHidden('action', 'clear');
+            ?>
+            <div class="button_row">
+                <?php $this->Form->fieldSubmit('clear', $this->_('Dynadot.tab_dnssec.field_clear', true), ['class' => 'btn btn-danger pull-right']); ?>
+            </div>
+            <?php $this->Form->end(); ?>
+        </div>
+    </div>

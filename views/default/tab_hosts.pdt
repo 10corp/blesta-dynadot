@@ -1,0 +1,66 @@
+<div class="p-3">
+    <h6 class="form-section-header"><?php $this->_('Dynadot.tab_hosts.title'); ?></h6>
+    <div class="table-responsive">
+        <table class="table table-hover mb-3">
+            <thead>
+                <tr>
+                    <th><?php $this->_('Dynadot.tab_hosts.field_hostname'); ?></th>
+                    <th><?php $this->_('Dynadot.tab_hosts.field_ip'); ?></th>
+                    <th><?php $this->_('Dynadot.tab_hosts.field_submit'); ?></th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                if (!empty($vars->hosts) && is_array($vars->hosts)) {
+                    foreach ($vars->hosts as $host) {
+                        ?>
+                        <tr>
+                            <td><?php echo $this->Html->safe(($host->host ?? '') . '.' . ($domain ?? '')); ?></td>
+                            <td><?php echo $this->Html->safe($host->ip ?? ''); ?></td>
+                            <td>
+                                <?php
+                                $this->Form->create(null, ['class' => 'd-inline']);
+                                $this->Form->fieldHidden('action', 'delete');
+                                $this->Form->fieldHidden('host', $host->host ?? '');
+                                $this->Form->fieldSubmit('delete', $this->_('Dynadot.tab_hosts.field_delete', true), ['class' => 'btn btn-sm btn-outline-danger']);
+                                $this->Form->end();
+                                ?>
+                            </td>
+                        </tr>
+                        <?php
+                    }
+                } else {
+                    ?>
+                    <tr>
+                        <td colspan="3" class="text-center text-muted"><?php $this->_('Dynadot.tab_hosts.no_results'); ?></td>
+                    </tr>
+                    <?php
+                }
+                ?>
+            </tbody>
+        </table>
+    </div>
+
+    <h6 class="form-section-header"><?php $this->_('Dynadot.tab_hosts.title_add'); ?></h6>
+    <?php
+    $this->Form->create();
+    $this->Form->fieldHidden('action', 'add');
+    ?>
+    <div class="mb-3">
+        <?php $this->Form->label($this->_('Dynadot.tab_hosts.field_hostname', true), 'host', ['class' => 'form-label']); ?>
+        <div class="input-group">
+            <?php $this->Form->fieldText('host', $vars->new_host ?? '', ['id' => 'host', 'class' => 'form-control']); ?>
+            <span class="input-group-text">.<?php echo $this->Html->safe($domain ?? ''); ?></span>
+        </div>
+    </div>
+    <div class="mb-3">
+        <?php
+        $this->Form->label($this->_('Dynadot.tab_hosts.field_ip', true), 'ip', ['class' => 'form-label']);
+        $this->Form->fieldText('ip', $vars->new_ip ?? '', ['id' => 'ip', 'class' => 'form-control']);
+        ?>
+    </div>
+    <div class="d-flex justify-content-end gap-2">
+        <?php $this->Form->fieldSubmit('save', $this->_('Dynadot.tab_hosts.field_add', true), ['class' => 'btn btn-primary']); ?>
+    </div>
+    <?php $this->Form->end(); ?>
+</div>

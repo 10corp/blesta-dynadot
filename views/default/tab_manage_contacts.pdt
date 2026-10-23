@@ -1,0 +1,51 @@
+<?php
+$tab_url = $this->base_uri . 'clients/servicetab/' . ($service->client_id ?? null) . '/' . ($service->id ?? null) . '/tabManageContacts/';
+?>
+<div class="p-3">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h6 class="form-section-header mb-0"><?php $this->_('Dynadot.tab_manage_contacts.title'); ?></h6>
+        <a class="btn btn-sm btn-outline-secondary" href="<?php echo $this->Html->safe($tab_url . '?action=manage'); ?>">
+            <i class="bi bi-plus-lg"></i> <?php $this->_('Dynadot.tab_manage_contacts.heading.add_contact'); ?>
+        </a>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover mb-3">
+            <thead>
+                <tr>
+                    <th><?php $this->_('Dynadot.tab_manage_contacts.heading.name'); ?></th>
+                    <th><?php $this->_('Dynadot.tab_manage_contacts.heading.options'); ?></th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                if (!empty($contacts)) {
+                    foreach ($contacts as $id => $name) {
+                        ?>
+                        <tr>
+                            <td><?php echo $this->Html->safe($name); ?></td>
+                            <td>
+                                <a class="btn btn-sm btn-outline-secondary" href="<?php echo $this->Html->safe($tab_url . '?action=manage&contact_id=' . rawurlencode($id)); ?>"><i class="bi bi-pencil"></i> <?php $this->_('Dynadot.tab_manage_contacts.option.edit'); ?></a>
+                            </td>
+                        </tr>
+                        <?php
+                    }
+                } else {
+                    ?>
+                    <tr>
+                        <td colspan="2" class="text-center text-muted"><?php $this->_('Dynadot.tab_manage_contacts.no_results'); ?></td>
+                    </tr>
+                    <?php
+                }
+                ?>
+            </tbody>
+        </table>
+    </div>
+    <?php
+    $this->Form->create();
+    $this->Form->fieldHidden('pull_contacts', 'true');
+    ?>
+    <div class="d-flex justify-content-end">
+        <?php $this->Form->fieldSubmit('sync', $this->_('Dynadot.tab_manage_contacts.field_sync', true), ['class' => 'btn btn-outline-secondary']); ?>
+    </div>
+    <?php $this->Form->end(); ?>
+</div>

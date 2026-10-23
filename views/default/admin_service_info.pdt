@@ -1,0 +1,23 @@
+<?php
+/**
+ * Admin Service Info Expandable Row (views/default/admin_service_info.pdt)
+ *
+ * Rendered by Dynadot::getAdminServiceInfo() -> Dynadot::renderServiceInformation().
+ */
+?>
+<table class="table">
+    <tr class="heading_row">
+        <td class="fixed_small center border_none"><span class="paymnt_arrow"></span></td>
+        <td class="border_left"><?php $this->_('Dynadot.service_info.domain'); ?></td>
+        <td><?php $this->_('Dynadot.service_info.status'); ?></td>
+        <td><?php $this->_('Dynadot.service_info.expiration'); ?></td>
+        <td class="last"><?php $this->_('Dynadot.service_info.lock_status'); ?></td>
+    </tr>
+    <tr>
+        <td></td>
+        <td><?php echo $this->Html->safe($domain ?? ''); ?></td>
+        <td><?php echo $this->Html->safe($status ?? 'Unknown'); ?></td>
+        <td><?php echo !empty($expiration) ? $this->Date->cast($expiration, 'date') : 'Unknown'; ?></td>
+        <td><?php echo $this->Html->safe($locked ?? 'Unknown'); ?></td>
+    </tr>
+</table>

@@ -1,0 +1,28 @@
+<div class="p-3">
+    <h6 class="form-section-header"><?php $this->_('Dynadot.tab_admin_actions.title'); ?></h6>
+    <?php
+    $this->Form->create();
+    $this->Form->fieldHidden('action', 'sync_date');
+    ?>
+    <div class="mb-3">
+        <?php $this->Form->fieldSubmit('sync', $this->_('Dynadot.tab_admin_actions.field_submit', true), ['class' => 'btn btn-primary']); ?>
+        <i class="bi bi-info-circle ms-1" data-bs-toggle="tooltip" data-bs-placement="top" title="<?php echo $this->Html->safe($this->_('Dynadot.tab_admin_actions.sync_date_tooltip', true)); ?>"></i>
+    </div>
+    <?php $this->Form->end(); ?>
+
+    <h6 class="mt-4"><?php $this->_('Dynadot.tab_admin_actions.epp_title'); ?></h6>
+    <?php
+    $this->Form->create();
+    $this->Form->fieldHidden('request_epp', 'true');
+    ?>
+    <p><?php $this->_('Dynadot.tab_admin_actions.epp_desc'); ?></p>
+    <?php $this->Form->fieldSubmit('submit_epp', $this->_('Dynadot.tab_admin_actions.field_epp_submit', true), ['class' => 'btn btn-outline-secondary']); ?>
+    <?php $this->Form->end(); ?>
+</div>
+<script type="text/javascript">
+document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(function (el) {
+    if (typeof bootstrap !== 'undefined') {
+        new bootstrap.Tooltip(el);
+    }
+});
+</script>

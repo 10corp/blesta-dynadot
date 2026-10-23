@@ -1,0 +1,42 @@
+    <div class="row panel-fix">
+        <div class="col-md-12">
+            <h4><?php $this->_('Dynadot.tab_whois.title');?></h4>
+            <?php
+            $this->Form->create();
+            ?>
+            <?php
+            $sections = ['Registrant', 'Admin', 'Technical', 'Billing'];
+            foreach ($sections as $section) {
+                $section_key = strtolower($section);
+            ?>
+                <h5><?php $this->_('Dynadot.tab_whois.section_' . $section_key);?></h5>
+                <div class="form-group">
+                    <?php
+                    foreach ($fields as $key => $field) {
+                        if (strpos($key, $section) !== 0) {
+                            continue;
+                        }
+                        ?>
+                        <div class="form-group">
+                            <?php
+                            $this->Form->label($field['label'], $key);
+                            $this->Form->fieldText($key, (isset($vars->{$key}) ? $vars->{$key} : null), ['id' => $key, 'class' => 'form-control']);
+                            ?>
+                        </div>
+                        <?php
+                    }
+                    ?>
+                </div>
+            <?php
+            }
+            ?>
+            <div class="button_row">
+                <?php
+                $this->Form->fieldSubmit('save', $this->_('Dynadot.tab_whois.field_submit', true), ['class' => 'btn btn-primary pull-right']);
+                ?>
+            </div>
+            <?php
+            $this->Form->end();
+            ?>
+        </div>
+    </div>
