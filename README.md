@@ -143,16 +143,6 @@ prices automatically.
 
 ## Changelog
 
-### 1.3.0
-
-- Blesta 6 (Paradigm admin theme) support: admin views converted to Bootstrap 5 and Bootstrap Icons, form helper classes added, `data-bs-*` tooltips.
-- Removed jQuery from the admin screens (Import Domains, DNS records, email forwarding, order form transfer toggle). Blesta 6 does not bundle jQuery, so these screens stopped working there.
-- `arrayToModuleFields()` replaced with `arrayToInputFields()`.
-- Added the module `icon` to `config.json`, raised the PHP requirement to 8.2.
-- Removed the no-op `curl_close()` call (deprecated in newer PHP versions).
-- Client and admin views use the same RESTful v2 command transport and payload
-  conventions.
-
 ### 1.0.1
 
 - Added the daily `update_pricing` module cron task for automatic Dynadot TLD
