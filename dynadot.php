@@ -382,7 +382,7 @@ class Dynadot extends RegistrarModule
         Loader::loadModels($this, ['ModuleManager']);
 
         foreach ($module_rows as $module_row) {
-            $module_row = $this->ModuleManager->getConfiguredModuleRow($module_row->id);
+            $module_row = $this->getRow($module_row->id);
             if (empty($module_row->meta->key)) {
                 continue;
             }
@@ -435,7 +435,7 @@ class Dynadot extends RegistrarModule
 
         $remaining_batch_slots = 25;
         foreach ($module_rows as $module_row) {
-            $module_row = $this->ModuleManager->getConfiguredModuleRow($module_row->id);
+            $module_row = $this->getRow($module_row->id);
             if (empty($module_row->meta->key)) {
                 continue;
             }

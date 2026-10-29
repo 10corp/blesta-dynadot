@@ -191,6 +191,18 @@ php components/modules/dynadot/tests/run_tuhin_co_tests.php
 
 ## Changelog
 
+### Version 1.0.3
+- **Cron Module Row Resolution Fix:**
+  - **Root Cause:** In `dynadot.php`, both `synchronizeAllDomains()` (called by `pull_nameservers`) and `synchronizeContacts()` (called by `pull_contacts`) were attempting to call `$this->ModuleManager->getConfiguredModuleRow($module_row->id)`.
+  - Blesta's core `ModuleManager` model does not have a `getConfiguredModuleRow` method (it provides `getRow($row_id)`), causing PHP to throw: `Call to undefined method Blesta\App\Models\ModuleManager::getConfiguredModuleRow()`.
+  - **Fix Applied:** Updated lines 385 and 438 in both `components/modules/dynadot/dynadot.php` and `dynadot/dynadot.php`:
+    ```php
+    // Replaced:
+    $module_row = $this->ModuleManager->getConfiguredModuleRow($module_row->id);
+    // With:
+    $module_row = $this->getRow($module_row->id);
+    ```
+
 ### Version 1.0.2
 - **4-Tier Modular Decomposition:** Extracted business logic from `dynadot.php` into 10 specialized command classes under `apis/commands/`.
 - **Full Domain Synchronization:** Added `DynadotDomainSync` for complete synchronization of expiration dates, nameservers, lock status, privacy, and contacts.
@@ -207,4 +219,4 @@ Developed and maintained by **[10Corp](https://www.10corp.com)**.
 - **Website:** [https://www.10corp.com](https://www.10corp.com)
 - **Technical Support:** [cs@10corp.com](mailto:cs@10corp.com)
 - **GitHub Repository:** [https://github.com/10corp/blesta-dynadot](https://github.com/10corp/blesta-dynadot)
-- **Blesta Marketplace:** [https://marketplace.blesta.com/](https://marketplace.blesta.com/)
+- **Blesta Marketplace:** [https://marketplace.blesta.com/extension/417](https://marketplace.blesta.com/extension/417)
