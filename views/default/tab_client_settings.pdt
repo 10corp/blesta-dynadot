@@ -1,0 +1,63 @@
+<?php
+$lock = $this->Html->ifSet($vars->registrar_lock);
+$privacy = $this->Html->ifSet($vars->privacy);
+$this->Form->create();
+?>
+<div class="p-3">
+    <div class="mb-3">
+        <?php $this->Form->label($this->_('Dynadot.tab_settings.field_registrar_lock', true), 'registrar_lock_yes', ['class' => 'form-label d-block']); ?>
+        <div class="form-check form-check-inline">
+            <?php
+            $this->Form->fieldRadio('registrar_lock', 'yes', $lock == 'yes' || $lock == 'true', ['id' => 'registrar_lock_yes', 'class' => 'form-check-input']);
+            $this->Form->label($this->_('Dynadot.tab_settings.field_registrar_lock_yes', true), 'registrar_lock_yes', ['class' => 'form-check-label']);
+            ?>
+        </div>
+        <div class="form-check form-check-inline">
+            <?php
+            $this->Form->fieldRadio('registrar_lock', 'no', $lock == 'no' || $lock == 'false', ['id' => 'registrar_lock_no', 'class' => 'form-check-input']);
+            $this->Form->label($this->_('Dynadot.tab_settings.field_registrar_lock_no', true), 'registrar_lock_no', ['class' => 'form-check-label']);
+            ?>
+        </div>
+    </div>
+    <div class="mb-3">
+        <?php $this->Form->label($this->_('Dynadot.tab_settings.field_whois_privacy', true), 'privacy_yes', ['class' => 'form-label d-block']); ?>
+        <div class="form-check form-check-inline">
+            <?php
+            $this->Form->fieldRadio('privacy', 'yes', $privacy == 'yes' || $privacy == 'true', ['id' => 'privacy_yes', 'class' => 'form-check-input']);
+            $this->Form->label($this->_('Dynadot.tab_settings.field_whois_privacy_yes', true), 'privacy_yes', ['class' => 'form-check-label']);
+            ?>
+        </div>
+        <div class="form-check form-check-inline">
+            <?php
+            $this->Form->fieldRadio('privacy', 'no', $privacy == 'no' || $privacy == 'false', ['id' => 'privacy_no', 'class' => 'form-check-input']);
+            $this->Form->label($this->_('Dynadot.tab_settings.field_whois_privacy_no', true), 'privacy_no', ['class' => 'form-check-label']);
+            ?>
+        </div>
+    </div>
+    <div class="d-flex justify-content-end gap-2 mb-3">
+        <?php $this->Form->fieldSubmit('save', $this->_('Dynadot.tab_settings.field_submit', true), ['class' => 'btn btn-primary']); ?>
+    </div>
+<?php $this->Form->end(); ?>
+
+    <hr>
+    <div class="mt-4">
+        <h6 class="form-section-header"><?php $this->_('Dynadot.tab_admin_actions.epp_title'); ?></h6>
+        <p class="text-muted mb-2"><?php $this->_('Dynadot.tab_admin_actions.epp_desc'); ?></p>
+        <?php
+        $this->Form->create();
+        $this->Form->fieldHidden('request_epp', 'true');
+        ?>
+        <div class="d-flex align-items-center gap-2 flex-wrap">
+            <button class="btn btn-outline-secondary" type="submit">
+                <i class="fas fa-key me-1"></i> <?php $this->_('Dynadot.tab_admin_actions.field_epp_submit'); ?>
+            </button>
+            <?php if (!empty($epp_code)) { ?>
+                <div class="input-group" style="max-width: 340px;">
+                    <input type="text" class="form-control font-monospace fw-bold text-danger border-danger" id="client_epp_code_val" value="<?php echo $this->Html->safe($epp_code); ?>" readonly>
+                    <button class="btn btn-outline-danger" type="button" onclick="navigator.clipboard.writeText(document.getElementById('client_epp_code_val').value); this.innerText='Copied!'; setTimeout(() => this.innerText='Copy', 2000);">Copy</button>
+                </div>
+            <?php } ?>
+        </div>
+        <?php $this->Form->end(); ?>
+    </div>
+</div>

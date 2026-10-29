@@ -1,0 +1,41 @@
+<div class="p-3">
+    <h6 class="form-section-header"><?php $this->_('Dynadot.tab_admin_actions.title'); ?></h6>
+    <?php
+    $this->Form->create();
+    $this->Form->fieldHidden('action', 'sync_domain');
+    ?>
+    <p class="text-muted mb-2"><?php $this->_('Dynadot.tab_admin_actions.sync_desc'); ?></p>
+    <div class="mb-3 d-flex align-items-center gap-2">
+        <button class="btn btn-primary" type="submit">
+            <i class="fas fa-sync me-1"></i> <?php $this->_('Dynadot.tab_admin_actions.field_submit'); ?>
+        </button>
+        <i class="fas fa-info-circle ms-1" data-bs-toggle="tooltip" data-bs-placement="top" title="<?php echo $this->Html->safe($this->_('Dynadot.tab_admin_actions.sync_date_tooltip', true)); ?>"></i>
+    </div>
+    <?php $this->Form->end(); ?>
+
+    <h6 class="mt-4"><?php $this->_('Dynadot.tab_admin_actions.epp_title'); ?></h6>
+    <?php
+    $this->Form->create();
+    $this->Form->fieldHidden('request_epp', 'true');
+    ?>
+    <p class="text-muted mb-2"><?php $this->_('Dynadot.tab_admin_actions.epp_desc'); ?></p>
+    <div class="d-flex align-items-center gap-2 flex-wrap">
+        <button class="btn btn-outline-secondary" type="submit">
+            <i class="fas fa-key me-1"></i> <?php $this->_('Dynadot.tab_admin_actions.field_epp_submit'); ?>
+        </button>
+        <?php if (!empty($epp_code)) { ?>
+            <div class="input-group" style="max-width: 340px;">
+                <input type="text" class="form-control font-monospace fw-bold text-danger border-danger" id="admin_epp_code_val" value="<?php echo $this->Html->safe($epp_code); ?>" readonly>
+                <button class="btn btn-outline-danger" type="button" onclick="navigator.clipboard.writeText(document.getElementById('admin_epp_code_val').value); this.innerText='Copied!'; setTimeout(() => this.innerText='Copy', 2000);">Copy</button>
+            </div>
+        <?php } ?>
+    </div>
+    <?php $this->Form->end(); ?>
+</div>
+<script type="text/javascript">
+document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(function (el) {
+    if (typeof bootstrap !== 'undefined') {
+        new bootstrap.Tooltip(el);
+    }
+});
+</script>

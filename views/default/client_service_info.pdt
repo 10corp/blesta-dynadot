@@ -1,0 +1,27 @@
+<?php
+/**
+ * Client Service Info Expandable Row (views/default/client_service_info.pdt)
+ *
+ * Rendered by Dynadot::getClientServiceInfo() -> Dynadot::renderServiceInformation().
+ */
+?>
+<div class="table-responsive">
+    <table class="table table-curved table-striped">
+        <thead>
+            <tr>
+                <th><?php $this->_('Dynadot.service_info.domain'); ?></th>
+                <th><?php $this->_('Dynadot.service_info.status'); ?></th>
+                <th><?php $this->_('Dynadot.service_info.expiration'); ?></th>
+                <th><?php $this->_('Dynadot.service_info.lock_status'); ?></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><?php echo $this->Html->safe($domain ?? ''); ?></td>
+                <td><?php echo $this->Html->safe($status ?? 'Unknown'); ?></td>
+                <td><?php echo !empty($expiration) ? $this->Date->cast($expiration, 'date') : 'Unknown'; ?></td>
+                <td><?php echo $this->Html->safe($locked ?? 'Unknown'); ?></td>
+            </tr>
+        </tbody>
+    </table>
+</div>

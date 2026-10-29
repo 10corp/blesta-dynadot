@@ -1,0 +1,20 @@
+{
+    "name": "10corp/dynadot",
+    "description": "Dynadot Registrar Module for Blesta",
+    "license": "GPL-3.0-or-later",
+    "type": "blesta-module",
+    "require": {
+        "php": ">=8.2.0",
+        "blesta/composer-installer": "~1.0"
+    },
+    "authors": [
+        {
+            "name": "10Corp",
+            "email": "cs@10corp.com",
+            "homepage": "https://www.10corp.com"
+        }
+    ],
+    "extra": {
+        "clientdir": "dynadot"
+    }
+}

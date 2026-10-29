@@ -1,0 +1,307 @@
+<?php
+$module_id = $module->id ?? ($module_id ?? null);
+if (empty($module_id)) {
+    Loader::loadModels($this, ['ModuleManager']);
+    $dynadot_mods = $this->ModuleManager->getByClass('dynadot', Configure::get('Blesta.company_id'));
+    $module_id = $dynadot_mods[0]->id ?? null;
+}
+
+$this->Widget->clear();
+$this->Widget->setLinkButtons([
+    [
+        'name' => $this->_('Dynadot.back_to_manage', true),
+        'icon' => 'bi bi-arrow-left me-1',
+        'attributes' => ['href' => $this->base_uri . 'settings/company/modules/manage/' . ($module_id ?? '') . '/']
+    ]
+]);
+$this->Widget->create(
+    $this->_('Dynadot.add_row.audit_domains.box_title', true, $module_row->meta->user ?? '')
+);
+
+$domains = $vars->domains ?? [];
+$packages = $vars->packages ?? [];
+$import_url = $this->base_uri . 'settings/company/modules/addrow/' . ($module_id ?? '') . '?action=import_domain';
+
+if (!empty($vars->list_error)) {
+    ?>
+    <div class="alert alert-danger">
+        <?php $this->_('Dynadot.add_row.audit_domains.list_error'); ?>
+    </div>
+    <?php
+} else {
+    ?>
+    <p><?php $this->_('Dynadot.add_row.audit_domains.box_description'); ?></p>
+    <p><strong><?php $this->_('Dynadot.add_row.audit_domains.summary', false, (int) $vars->total, (int) $vars->existing, count($domains)); ?></strong></p>
+    <?php
+}
+
+if (empty($vars->list_error) && !empty($domains) && empty($packages)) {
+    ?>
+    <div class="alert alert-warning">
+        <?php $this->_('Dynadot.add_row.audit_domains.no_packages'); ?>
+    </div>
+    <?php
+}
+
+if (!empty($domains) && !empty($packages)) {
+    $package_options = ['auto' => $this->_('Dynadot.add_row.audit_domains.package_auto', true)] + $packages;
+    ?>
+    <datalist id="dynadot_clients">
+        <option value="auto"><?php $this->_('Dynadot.add_row.audit_domains.client_auto'); ?></option>
+        <?php
+        foreach ($vars->clients ?? [] as $client) {
+            $label = $client->id . ' - ' . trim($client->first_name . ' ' . $client->last_name)
+                . (!empty($client->company) ? ' (' . $client->company . ')' : '')
+                . ' <' . $client->email . '>';
+            ?>
+            <option value="<?php echo $this->Html->safe($label); ?>"></option>
+            <?php
+        }
+        ?>
+    </datalist>
+
+    <div class="row g-2 align-items-center mb-3" id="dynadot_import_apply">
+        <div class="col-auto"><label class="col-form-label" for="dynadot_apply_client"><?php $this->_('Dynadot.add_row.audit_domains.client'); ?></label></div>
+        <div class="col-auto"><input type="text" class="form-control form-control-sm" list="dynadot_clients" id="dynadot_apply_client" value="auto" /></div>
+        <div class="col-auto"><label class="col-form-label" for="dynadot_apply_package"><?php $this->_('Dynadot.add_row.audit_domains.package'); ?></label></div>
+        <div class="col-auto">
+            <?php
+            $this->Form->fieldSelect('apply_package', $package_options, 'auto', ['id' => 'dynadot_apply_package', 'class' => 'form-select form-select-sm']);
+            ?>
+        </div>
+        <div class="col-auto"><button type="button" class="btn btn-outline-secondary btn-sm" id="dynadot_apply"><?php $this->_('Dynadot.add_row.audit_domains.apply_all'); ?></button></div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-hover mb-0" id="dynadot_import_domains">
+            <thead>
+                <tr>
+                    <th><input type="checkbox" class="form-check-input" id="dynadot_select_all" /></th>
+                    <th><?php $this->_('Dynadot.add_row.audit_domains.domain_name'); ?></th>
+                    <th><?php $this->_('Dynadot.add_row.audit_domains.expiration'); ?></th>
+                    <th><?php $this->_('Dynadot.add_row.audit_domains.status'); ?></th>
+                    <th><?php $this->_('Dynadot.add_row.audit_domains.client'); ?></th>
+                    <th><?php $this->_('Dynadot.add_row.audit_domains.package'); ?></th>
+                    <th><?php $this->_('Dynadot.add_row.audit_domains.result'); ?></th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                foreach ($domains as $i => $domain) {
+                    ?>
+                    <tr class="dynadot_domain" data-domain="<?php echo $this->Html->safe($domain->domain); ?>">
+                        <td><input type="checkbox" class="form-check-input dynadot_select" /></td>
+                        <td><?php echo $this->Html->safe($domain->domain); ?></td>
+                        <td><?php echo $this->Html->safe($domain->expiration ? $this->Date->cast($domain->expiration, 'date') : ''); ?></td>
+                        <td><?php echo $this->Html->safe($domain->status); ?></td>
+                        <td><input type="text" class="form-control form-control-sm dynadot_client" list="dynadot_clients" value="auto" /></td>
+                        <td>
+                            <?php
+                            $this->Form->fieldSelect(
+                                'package_id[' . $i . ']',
+                                $package_options,
+                                !empty($domain->package_id) ? $domain->package_id : 'auto',
+                                ['class' => 'form-select form-select-sm dynadot_package']
+                            );
+                            ?>
+                        </td>
+                        <td class="dynadot_result"></td>
+                    </tr>
+                    <?php
+                }
+                ?>
+            </tbody>
+        </table>
+    </div>
+
+    <?php $this->Widget->footer(); ?>
+    <div class="d-flex justify-content-end align-items-center gap-3">
+        <span id="dynadot_import_status"></span>
+        <button type="button" class="btn btn-primary" id="dynadot_import"><?php $this->_('Dynadot.add_row.audit_domains.import_btn'); ?></button>
+    </div>
+    <?php
+} elseif (empty($vars->list_error) && empty($domains)) {
+    ?>
+    <div class="text-center text-muted py-5">
+        <i class="bi bi-inbox fs-1 mb-3 d-block opacity-50"></i>
+        <p class="mb-0"><?php $this->_('Dynadot.add_row.audit_domains.no_results'); ?></p>
+    </div>
+    <?php
+}
+
+if (!empty($vars->missing)) {
+    ?>
+    <h6 class="form-section-header mt-4"><?php $this->_('Dynadot.add_row.audit_domains.missing_title'); ?></h6>
+    <p><?php $this->_('Dynadot.add_row.audit_domains.missing_description'); ?></p>
+    <div class="table-responsive">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr>
+                    <th><?php $this->_('Dynadot.add_row.audit_domains.domain_name'); ?></th>
+                    <th><?php $this->_('Dynadot.add_row.audit_domains.service'); ?></th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                foreach ($vars->missing as $service) {
+                    ?>
+                    <tr>
+                        <td><?php echo $this->Html->safe($service->domain); ?></td>
+                        <td><a href="<?php echo $this->Html->safe($this->base_uri . 'clients/editservice/' . $service->client_id . '/' . $service->id . '/'); ?>">#<?php echo $this->Html->safe($service->id); ?></a></td>
+                    </tr>
+                    <?php
+                }
+                ?>
+            </tbody>
+        </table>
+    </div>
+    <?php
+}
+
+$this->Widget->end();
+
+if (!empty($domains) && !empty($packages)) {
+    $json_flags = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT;
+    ?>
+<script type="text/javascript">
+(function () {
+    'use strict';
+
+    var import_url = <?php echo json_encode($import_url, $json_flags); ?>;
+    var import_params = {
+        module_row_id: <?php echo json_encode($module_row->id ?? null); ?>,
+        token: <?php echo json_encode($import_token ?? '', $json_flags); ?>
+    };
+    var importing_text = <?php echo json_encode($this->_('Dynadot.add_row.audit_domains.importing', true), $json_flags); ?>;
+    var done_text = <?php echo json_encode($this->_('Dynadot.add_row.audit_domains.done', true, '%1$s', '%2$s'), $json_flags); ?>;
+    var running = false;
+
+    function init() {
+        var table = document.getElementById('dynadot_import_domains');
+        var import_btn = document.getElementById('dynadot_import');
+        var status = document.getElementById('dynadot_import_status');
+        if (!table || !import_btn || import_btn.dataset.bound) {
+            return;
+        }
+        import_btn.dataset.bound = '1';
+
+        function selected(only_checked) {
+            return Array.prototype.slice.call(
+                table.querySelectorAll('.dynadot_select' + (only_checked ? ':checked' : ':not(:disabled)'))
+            );
+        }
+
+        document.getElementById('dynadot_select_all').addEventListener('change', function () {
+            var checked = this.checked;
+            selected(false).forEach(function (box) {
+                box.checked = checked;
+            });
+        });
+
+        document.getElementById('dynadot_apply').addEventListener('click', function (e) {
+            e.preventDefault();
+            var client = document.getElementById('dynadot_apply_client').value;
+            var package_id = document.getElementById('dynadot_apply_package').value;
+            selected(true).forEach(function (box) {
+                var row = box.closest('tr');
+                row.querySelector('.dynadot_client').value = client;
+                row.querySelector('.dynadot_package').value = package_id;
+            });
+        });
+
+        import_btn.addEventListener('click', function (e) {
+            e.preventDefault();
+            if (running) {
+                return;
+            }
+
+            var rows = selected(true).map(function (box) {
+                return box.closest('tr');
+            });
+            if (!rows.length) {
+                return;
+            }
+
+            running = true;
+            var imported = 0;
+            var failed = 0;
+            import_btn.classList.add('disabled');
+            status.textContent = importing_text;
+
+            // Import one domain at a time to stay within the Dynadot rate limit
+            function next() {
+                if (!rows.length) {
+                    running = false;
+                    import_btn.classList.remove('disabled');
+                    status.textContent = done_text.replace('%1$s', imported).replace('%2$s', failed);
+                    return;
+                }
+
+                var row = rows.shift();
+                var result = row.querySelector('.dynadot_result');
+                result.textContent = importing_text;
+                result.style.color = '';
+
+                var params = new URLSearchParams(import_params);
+                params.set('domain', row.dataset.domain);
+                params.set('client_id', row.querySelector('.dynadot_client').value);
+                params.set('package_id', row.querySelector('.dynadot_package').value);
+
+                fetch(import_url + '&' + params.toString(), {
+                    method: 'GET',
+                    credentials: 'same-origin',
+                    headers: {'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json'}
+                })
+                    .then(function (r) {
+                        if (!r.ok) {
+                            throw new Error('HTTP ' + r.status);
+                        }
+                        return r.json();
+                    })
+                    .then(function (response) {
+                        result.textContent = '';
+                        if (response && response.success) {
+                            imported++;
+                            result.style.color = 'green';
+                            if (response.service_url) {
+                                var link = document.createElement('a');
+                                link.href = response.service_url;
+                                link.textContent = response.message;
+                                result.appendChild(link);
+                            } else {
+                                result.textContent = response.message;
+                            }
+                            row.querySelectorAll('input, select').forEach(function (el) {
+                                el.disabled = true;
+                            });
+                            row.querySelector('.dynadot_select').checked = false;
+                        } else {
+                            failed++;
+                            result.style.color = 'red';
+                            result.textContent = response && response.message ? response.message : 'Error';
+                        }
+                    })
+                    .catch(function (err) {
+                        failed++;
+                        result.style.color = 'red';
+                        result.textContent = err.message;
+                    })
+                    .finally(function () {
+                        setTimeout(next, 500);
+                    });
+            }
+
+            next();
+        });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+    document.addEventListener('blestaAjaxComplete', init);
+})();
+</script>
+    <?php
+}

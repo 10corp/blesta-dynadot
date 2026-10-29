@@ -1,0 +1,84 @@
+<?php $this->Form->create(); ?>
+<div class="p-3">
+    <h6 class="form-section-header"><?php $this->_('Dynadot.tab_dnsrecords.title_list'); ?></h6>
+    <p><?php $this->_('Dynadot.tab_dnsrecords.help_text'); ?></p>
+    <div class="d-flex justify-content-end mb-2">
+        <button type="button" class="btn btn-sm btn-outline-secondary" id="add_dns_record"><i class="fas fa-plus"></i> <?php $this->_('Dynadot.tab_dnsrecords.add_record'); ?></button>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover mb-3" id="dns_records">
+                <thead>
+                    <tr>
+                        <th><?php $this->_('Dynadot.tab_dnsrecords.record_type'); ?></th>
+                        <th><?php $this->_('Dynadot.tab_dnsrecords.host'); ?></th>
+                        <th><?php $this->_('Dynadot.tab_dnsrecords.value'); ?></th>
+                        <th><?php $this->_('Dynadot.tab_dnsrecords.extra'); ?></th>
+                        <th><?php $this->_('Dynadot.tab_dnsrecords.options'); ?></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    $i = 0;
+                    do {
+                        ?>
+                        <tr>
+                            <td><?php $this->Form->fieldSelect('main_record_type' . $i, $vars->record_types ?? [], $vars->{'main_record_type' . $i} ?? null, ['class' => 'form-select form-select-sm']); ?></td>
+                            <td><?php $this->Form->fieldText('subdomain' . $i, $vars->{'subdomain' . $i} ?? null, ['class' => 'form-control form-control-sm', 'placeholder' => '@']); ?></td>
+                            <td><?php $this->Form->fieldText('main_record' . $i, $vars->{'main_record' . $i} ?? null, ['class' => 'form-control form-control-sm']); ?></td>
+                            <td><?php $this->Form->fieldText('record_x' . $i, $vars->{'record_x' . $i} ?? null, ['class' => 'form-control form-control-sm', 'placeholder' => $this->_('Dynadot.tab_dnsrecords.extra_placeholder', true)]); ?></td>
+                            <td><button type="button" class="btn btn-sm btn-danger delete_row" title="<?php echo $this->Html->safe($this->_('Blesta.delete', true)); ?>"><i class="fas fa-trash-alt"></i> Delete</button></td>
+                        </tr>
+                        <?php
+                        $i++;
+                    } while (isset($vars->{'main_record_type' . $i}));
+                    ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="d-flex justify-content-end gap-2">
+        <button type="submit" name="save" class="btn btn-primary"><i class="fas fa-save"></i> <?php $this->_('Dynadot.tab_dnsrecords.field_submit'); ?></button>
+    </div>
+</div>
+<?php $this->Form->end(); ?>
+
+<script type="text/javascript">
+(function () {
+    var record_count = <?php echo (int) $i; ?>;
+    var table = document.getElementById('dns_records');
+    var add = document.getElementById('add_dns_record');
+    if (!table || !add) {
+        return;
+    }
+    var body = table.querySelector('tbody');
+    add.addEventListener('click', function (e) {
+        e.preventDefault();
+        var clone = body.querySelector('tr').cloneNode(true);
+        clone.querySelectorAll('input, select').forEach(function (field) {
+            var name = field.getAttribute('name');
+            if (name) {
+                var new_name = name.replace(/\d+$/, record_count);
+                field.setAttribute('name', new_name);
+                field.setAttribute('id', new_name);
+            }
+            field.value = '';
+        });
+        body.appendChild(clone);
+        record_count++;
+    });
+    table.addEventListener('click', function (e) {
+        var button = e.target.closest('.delete_row');
+        if (!button) {
+            return;
+        }
+        e.preventDefault();
+        var row = button.closest('tr');
+        if (body.querySelectorAll('tr').length > 1) {
+            row.remove();
+        } else {
+            row.querySelectorAll('input').forEach(function (input) { input.value = ''; });
+            row.querySelectorAll('select').forEach(function (select) { select.selectedIndex = 0; });
+        }
+    });
+})();
+</script>

@@ -1,0 +1,74 @@
+<div class="p-3">
+    <h6 class="form-section-header"><?php $this->_('Dynadot.tab_hosts.title'); ?></h6>
+    <div class="table-responsive">
+        <table class="table table-hover mb-4">
+            <thead>
+                <tr>
+                    <th><?php $this->_('Dynadot.tab_hosts.field_hostname'); ?></th>
+                    <th><?php $this->_('Dynadot.tab_hosts.field_ip'); ?></th>
+                    <th class="text-end"><?php $this->_('Dynadot.tab_dnsrecords.options'); ?></th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                if (!empty($vars->hosts) && is_array($vars->hosts)) {
+                    foreach ($vars->hosts as $host) {
+                        ?>
+                        <tr>
+                            <td class="align-middle fw-semibold"><?php echo $this->Html->safe(($host->host ?? '') . '.' . ($domain ?? '')); ?></td>
+                            <td class="align-middle"><code><?php echo $this->Html->safe($host->ip ?? ''); ?></code></td>
+                            <td class="align-middle text-end">
+                                <?php
+                                $this->Form->create(null, ['class' => 'd-inline']);
+                                $this->Form->fieldHidden('action', 'delete');
+                                $this->Form->fieldHidden('host', $host->host ?? '');
+                                ?>
+                                <button type="submit" name="delete" class="btn btn-sm btn-danger">
+                                    <i class="fas fa-trash-alt"></i> <?php $this->_('Dynadot.tab_hosts.field_delete'); ?>
+                                </button>
+                                <?php
+                                $this->Form->end();
+                                ?>
+                            </td>
+                        </tr>
+                        <?php
+                    }
+                } else {
+                    ?>
+                    <tr>
+                        <td colspan="3" class="text-center text-muted py-3"><?php $this->_('Dynadot.tab_hosts.no_results'); ?></td>
+                    </tr>
+                    <?php
+                }
+                ?>
+            </tbody>
+        </table>
+    </div>
+
+    <h6 class="form-section-header"><?php $this->_('Dynadot.tab_hosts.title_add'); ?></h6>
+    <?php
+    $this->Form->create();
+    $this->Form->fieldHidden('action', 'add');
+    ?>
+    <div class="mb-3">
+        <?php $this->Form->label($this->_('Dynadot.tab_hosts.field_hostname', true), 'host', ['class' => 'form-label']); ?>
+        <div class="input-group">
+            <?php $this->Form->fieldText('host', $vars->new_host ?? '', ['id' => 'host', 'class' => 'form-control', 'placeholder' => 'ns1']); ?>
+            <span class="input-group-text">.<?php echo $this->Html->safe($domain ?? ''); ?></span>
+        </div>
+        <div class="form-text text-muted">Enter the hostname prefix (e.g. <code>ns1</code> or <code>ns2</code>) for your child name server.</div>
+    </div>
+    <div class="mb-3">
+        <?php
+        $this->Form->label($this->_('Dynadot.tab_hosts.field_ip', true), 'ip', ['class' => 'form-label']);
+        $this->Form->fieldText('ip', $vars->new_ip ?? '', ['id' => 'ip', 'class' => 'form-control', 'placeholder' => '192.0.2.1']);
+        ?>
+        <div class="form-text text-muted">Enter the primary IPv4 (or IPv6) address for this child name server.</div>
+    </div>
+    <div class="d-flex justify-content-end gap-2">
+        <button type="submit" name="save" class="btn btn-primary">
+            <i class="fas fa-plus"></i> <?php $this->_('Dynadot.tab_hosts.field_add'); ?>
+        </button>
+    </div>
+    <?php $this->Form->end(); ?>
+</div>

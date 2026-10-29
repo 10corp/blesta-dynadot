@@ -1,0 +1,45 @@
+<?php
+$this->Widget->clear();
+$this->Widget->setLinkButtons($link_buttons ?? []);
+$this->Widget->setBodyWrapper(false);
+$this->Widget->create(
+    $this->_('AdminCompanyModules.manage.boxtitle_manage', true, $this->Html->safe($module->name ?? 'Dynadot')),
+    ['id' => 'manage_dynadot']
+);
+$rows = is_array($module->rows ?? null) ? $module->rows : [];
+?>
+<table class="table">
+    <thead>
+        <tr>
+            <th><?php $this->_('Dynadot.manage.module_row_title'); ?></th>
+            <th><?php $this->_('Dynadot.row_meta.sandbox'); ?></th>
+            <th><?php $this->_('Dynadot.manage.module_rows_options'); ?></th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php foreach ($rows as $row) { ?>
+            <tr>
+                <td><?php echo $this->Html->safe($row->meta->user ?? ''); ?></td>
+                <td><?php echo ($row->meta->sandbox ?? 'false') === 'true' ? 'Yes (Sandbox)' : 'No (Live)'; ?></td>
+                <td>
+                    <a class="btn btn-sm btn-outline-secondary" href="<?php echo $this->Html->safe($this->base_uri . 'settings/company/modules/editrow/' . ($module->id ?? '') . '/' . ($row->id ?? '') . '/'); ?>">
+                        <i class="bi bi-pencil"></i>
+                    </a>
+                    <a class="btn btn-sm btn-outline-secondary" href="<?php echo $this->Html->safe($this->base_uri . 'settings/company/modules/addrow/' . ($module->id ?? '') . '/?action=audit_domains&module_row_id=' . ($row->id ?? '')); ?>">
+                        <?php $this->_('Dynadot.manage.module_rows.import'); ?>
+                    </a>
+                    <?php
+                    $this->Form->create($this->base_uri . 'settings/company/modules/deleterow/', ['class' => 'd-inline']);
+                    $this->Form->fieldHidden('id', $module->id ?? '');
+                    $this->Form->fieldHidden('row_id', $row->id ?? '');
+                    ?>
+                    <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('<?php echo $this->Html->safe($this->_('Dynadot.manage.module_rows.confirm_delete', true)); ?>');">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                    <?php $this->Form->end(); ?>
+                </td>
+            </tr>
+        <?php } ?>
+    </tbody>
+</table>
+<?php $this->Widget->end(); ?>

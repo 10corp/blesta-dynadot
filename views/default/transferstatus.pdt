@@ -1,0 +1,15 @@
+    <div class="title_row first">
+        <h3><?php $this->_('Dynadot.transferstatus.title');?></h3>
+    </div>
+    <div class="pad">
+        <table class="table">
+            <tbody>
+                <tr class="heading_row">
+                    <td><?php $this->_('Dynadot.transferstatus.heading_status');?></td>
+                </tr>
+                <tr>
+                    <td><?php echo (isset($transferstatus->status) ? $this->Html->safe($transferstatus->status) : null);?></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
